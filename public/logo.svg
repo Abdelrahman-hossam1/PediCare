@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="40" viewBox="0 0 160 40" fill="none">
+  <rect x="0" y="0" width="40" height="40" rx="10" fill="#F59E0B"/>
+  <path d="M20 10c-1.1046 0-2 .8954-2 2v6h-6c-1.1046 0-2 .8954-2 2s.8954 2 2 2h6v6c0 1.1046.8954 2 2 2s2-.8954 2-2v-6h6c1.1046 0 2-.8954 2-2s-.8954-2-2-2h-6v-6c0-1.1046-.8954-2-2-2z" fill="#111827"/>
+  <text x="52" y="26" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="18" font-weight="700" fill="#111827">
+    Clinic
+  </text>
+</svg>
+

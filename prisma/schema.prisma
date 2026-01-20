@@ -1,0 +1,217 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/* ===================== ENUMS ===================== */
+
+enum Role {
+  DOCTOR
+  RECEPTIONIST
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum BloodType {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELED
+  NO_SHOW
+}
+
+enum PaymentMethod {
+  CASH
+  INSTAPAY
+  CARD
+  WALLET
+}
+
+enum PaymentStatus {
+  PAID
+  REFUNDED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+/* ===================== MODELS ===================== */
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(RECEPTIONIST)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  doctorAppointments Appointment[] @relation("DoctorAppointments")
+  medicalRecords     MedicalRecord[] @relation("DoctorMedicalRecords")
+  paymentsHandled    Payment[]
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  gender      Gender
+  dateOfBirth DateTime
+
+  phone   String
+  email   String? @unique
+  address String?
+
+  bloodType BloodType?
+  allergies String?
+  notes     String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+}
+
+model Appointment {
+  id String @id @default(cuid())
+
+  patientId String
+  doctorId  String
+
+  startsAt DateTime
+  status   AppointmentStatus @default(SCHEDULED)
+  notes    String?
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  doctor  User    @relation("DoctorAppointments", fields: [doctorId], references: [id])
+
+  medicalRecord MedicalRecord?
+  invoice       Invoice?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([patientId])
+  @@index([doctorId, startsAt])
+}
+
+model MedicalRecord {
+  id String @id @default(cuid())
+
+  patientId String
+  doctorId  String
+
+  // Optional: one medical record per appointment
+  appointmentId String? @unique
+
+  diagnosis     String?
+  symptoms      String?
+  treatmentPlan String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient     Patient      @relation(fields: [patientId], references: [id])
+  doctor      User         @relation("DoctorMedicalRecords", fields: [doctorId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+
+  @@index([patientId, createdAt])
+  @@index([doctorId, createdAt])
+}
+
+/* ===================== FINANCIALS ===================== */
+
+model Invoice {
+  id String @id @default(cuid())
+
+  appointmentId String @unique
+
+  subtotal      Int      // sum of all invoice items before discount
+  discountType  DiscountType?
+  discountValue Int?     // amount or percentage
+  total         Int      // final amount after discount
+
+  isPaid Boolean @default(false)
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  payments    Payment[]
+  items       InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(cuid())
+
+  invoiceId String
+
+  amount Int
+  method PaymentMethod
+  status PaymentStatus @default(PAID)
+
+  handledById String
+  handledBy   User @relation(fields: [handledById], references: [id])
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model InvoiceItem {
+  id        String @id @default(cuid())
+  invoiceId String
+  name      String      // vaccine name or service name
+  price     Int         // price for this appointment (override default price)
+  quantity  Int @default(1)
+  type      String      // "VACCINE" or "SERVICE"
+
+  vaccineId String?     // optional link if it's a vaccine
+  invoice   Invoice     @relation(fields: [invoiceId], references: [id])
+  vaccine   Vaccine?    @relation(fields: [vaccineId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/* ===================== VACCINES ===================== */
+
+model Vaccine {
+  id        String   @id @default(cuid())
+  name      String
+  stock     Int
+  defaultPrice Int
+  availableFrom DateTime?
+  availableTo   DateTime?
+
+  invoiceItems InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+  
