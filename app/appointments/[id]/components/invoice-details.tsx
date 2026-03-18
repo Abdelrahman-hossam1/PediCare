@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Invoice } from "../types";
+import { useConfirmDialog } from "@/components/confirm-dialog-provider";
 
 export function InvoiceDetails({
   invoice,
@@ -20,6 +21,8 @@ export function InvoiceDetails({
   loading: boolean;
   onRemoveItem: (itemId: string) => void;
 }) {
+  const confirmDialog = useConfirmDialog();
+
   return (
     <section className="rounded-lg border p-3 text-sm">
       <div className="flex items-center justify-between gap-3">
@@ -56,8 +59,15 @@ export function InvoiceDetails({
                       size="sm"
                       variant="destructive"
                       disabled={loading}
-                      onClick={() => {
-                        if (!confirm("Remove this item from the invoice?")) return;
+                      onClick={async () => {
+                        const ok = await confirmDialog({
+                          title: "Remove item?",
+                          description: "This will remove the item from the invoice.",
+                          confirmText: "Remove",
+                          cancelText: "Cancel",
+                          confirmVariant: "destructive",
+                        });
+                        if (!ok) return;
                         onRemoveItem(it.id);
                       }}
                     >

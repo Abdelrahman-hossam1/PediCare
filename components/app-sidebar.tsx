@@ -4,7 +4,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -13,8 +12,15 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 import Image from "next/image"
-import { CalendarDays, ClipboardList, Stethoscope, Users } from "lucide-react"
-import { LogoutButton } from "@/components/logoutButton"
+import {
+  CalendarDays,
+  ClipboardList,
+  Settings,
+  Users,
+  LayoutDashboard,
+  Syringe,
+  Building2
+} from "lucide-react"
 import { getCurrentUser } from "@/lib/getCurrentUser"
 import logoPng from "@/assets/images/logo.png"
 
@@ -28,46 +34,77 @@ export async function AppSidebar() {
     show: boolean
     icon: React.ComponentType<{ className?: string }>
   }> = [
-    { href: "/patients", label: "Patients", show: role !== null, icon: Users },
-    {
-      href: "/appointments",
-      label: "Appointments",
-      show: role !== null,
-      icon: CalendarDays,
-    },
-    {
-      href: "/medical-records",
-      label: "Medical records",
-      show: role !== null,
-      icon: ClipboardList,
-    },
-    {
-      href: "/receptionist",
-      label: "Receptionist",
-      show: role === "ADMIN" || role === "RECEPTIONIST",
-      icon: Stethoscope,
-    },
-    {
-      href: "/doctor",
-      label: "Doctor",
-      show: role === "ADMIN" || role === "DOCTOR",
-      icon: Stethoscope,
-    },
-  ]
+      {
+        href: "/doctor",
+        label: "Dashboard",
+        show: role === "DOCTOR" || role === "ADMIN",
+        icon: LayoutDashboard
+      },
+      {
+        href: "/receptionist",
+        label: "Dashboard",
+        show: role === "RECEPTIONIST",
+        icon: LayoutDashboard
+      },
+      {
+        href: "/appointments",
+        label: "Appointments",
+        show: role !== null,
+        icon: CalendarDays,
+      },
+      {
+        href: "/patients",
+        label: "Patients",
+        show: role !== null,
+        icon: Users
+      },
+      {
+        href: "/medical-records",
+        label: "Medical Records",
+        show: role !== null,
+        icon: ClipboardList,
+      }
+    ]
+
+  const bottomItems: Array<{
+    href: string
+    label: string
+    show: boolean
+    icon: React.ComponentType<{ className?: string }>
+  }> = [
+      {
+        href: "/admin",
+        label: "Admin Portal",
+        show: role === "ADMIN",
+        icon: Building2,
+      }
+    ]
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-2 py-1">
-          <Image src={logoPng} alt="Clinic" width={140} height={40} priority />
+    <Sidebar className="border-r border-sidebar-border">
+      <SidebarHeader className="p-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+            <Image
+              src={logoPng}
+              alt="PediCare"
+              width={28}
+              height={28}
+              priority
+              className="object-contain"
+            />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-foreground">PediCare</h1>
+            <p className="text-xs text-muted-foreground">Clinic Management</p>
+          </div>
         </Link>
       </SidebarHeader>
 
       <SidebarSeparator />
 
-      <SidebarContent>
+      <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems
@@ -75,11 +112,11 @@ export async function AppSidebar() {
                 .map((i) => {
                   const Icon = i.icon
                   return (
-                    <SidebarMenuItem key={i.href}>
-                      <SidebarMenuButton asChild>
-                        <Link href={i.href}>
-                          <Icon className="size-4" />
-                          <span>{i.label}</span>
+                    <SidebarMenuItem key={i.href + i.label}>
+                      <SidebarMenuButton asChild className="h-10">
+                        <Link href={i.href} className="flex items-center gap-3">
+                          <Icon className="h-5 w-5" />
+                          <span className="font-medium">{i.label}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -92,13 +129,24 @@ export async function AppSidebar() {
 
       <SidebarSeparator />
 
-      <SidebarFooter>
-        <div className="flex flex-col gap-2 px-2 py-1">
-          <div className="text-xs text-sidebar-foreground/70">
-            {role ? `Role: ${role}` : "Not logged in"}
-          </div>
-          {role ? <LogoutButton /> : null}
-        </div>
+      <SidebarFooter className="px-2 pb-4">
+        <SidebarMenu>
+          {bottomItems
+            .filter((i) => i.show)
+            .map((i) => {
+              const Icon = i.icon
+              return (
+                <SidebarMenuItem key={i.href + i.label}>
+                  <SidebarMenuButton asChild className="h-10">
+                    <Link href={i.href} className="flex items-center gap-3">
+                      <Icon className="h-5 w-5" />
+                      <span className="font-medium">{i.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )

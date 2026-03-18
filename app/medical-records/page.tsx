@@ -5,19 +5,20 @@ import { canRead } from "@/lib/rbac";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { FileText, Pencil, Search } from "lucide-react";
 
 type SearchParams = {
   patientId?: string;
   doctorId?: string;
+  q?: string;
 };
+
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
+}
 
 export default async function MedicalRecordsPage({
   searchParams,
@@ -29,7 +30,7 @@ export default async function MedicalRecordsPage({
 
   const sp = await searchParams;
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (sp.patientId) where.patientId = sp.patientId;
   if (sp.doctorId) where.doctorId = sp.doctorId;
   if (user.role === "DOCTOR") where.doctorId = user.id;
@@ -46,87 +47,155 @@ export default async function MedicalRecordsPage({
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="rounded-md bg-primary px-4 py-2 text-2xl font-semibold text-primary-foreground">
-          Medical records
-        </h1>
-
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Medical Records</h1>
+          <p className="text-muted-foreground">View and manage patient medical records</p>
+        </div>
         {user.role === "DOCTOR" && (
-          <Link href="/medical-records/new" className="rounded-md bg-primary px-4 py-2 text-primary-foreground">
-            New record
-          </Link>
+          <Button asChild>
+            <Link href="/medical-records/new">New Record</Link>
+          </Button>
         )}
       </div>
 
-      <form className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Input
-          name="patientId"
-          placeholder="patientId (optional)"
-          defaultValue={sp.patientId || ""}
-        />
-        <Input
-          name="doctorId"
-          placeholder="doctorId (optional)"
-          defaultValue={sp.doctorId || ""}
-          disabled={user.role === "DOCTOR"}
-        />
-        <Button type="submit" variant="outline">
-          Apply filters
-        </Button>
-      </form>
+      {/* Stats & Search */}
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm font-medium">
+          All Medical Records ({records.length})
+        </p>
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by patient, diagnosis..."
+            className="pl-10"
+          />
+        </div>
+      </div>
 
-      <div className="rounded-lg border overflow-hidden">
-        <Table>
-          <TableHeader className="bg-primary text-primary-foreground">
-            <TableRow className="hover:bg-primary">
-              <TableHead className="text-primary-foreground">Created</TableHead>
-              <TableHead className="text-primary-foreground">Patient</TableHead>
-              <TableHead className="text-primary-foreground">Doctor</TableHead>
-              <TableHead className="text-primary-foreground">Appointment</TableHead>
-              <TableHead className="text-primary-foreground">Open</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {records.map((r: any) => (
-              <TableRow key={r.id}>
-                <TableCell>{new Date(r.createdAt).toLocaleString()}</TableCell>
-                <TableCell>
-                  <div>
-                    {r.patient.firstName} {r.patient.lastName}
-                  </div>
-                  <div className="text-gray-500">{r.patient.phone}</div>
-                </TableCell>
-                <TableCell>{r.doctor.email}</TableCell>
-                <TableCell>
-                  {r.appointment ? (
+      {/* Records List */}
+      <div className="space-y-4">
+        {records.map((record: any) => (
+          <Card key={record.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                {/* Header Row */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12 bg-primary">
+                      <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+                        {getInitials(record.patient.firstName, record.patient.lastName)}
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
-                      <div>{new Date(r.appointment.startsAt).toLocaleString()}</div>
-                      <div className="text-gray-500">{r.appointment.status}</div>
+                      <p className="font-semibold text-lg">
+                        {record.patient.firstName} {record.patient.lastName}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(record.createdAt).toLocaleDateString("en-CA")}
+                      </p>
                     </div>
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Link className="underline" href={`/medical-records/${r.id}`}>
-                    View
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </div>
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                    {record.doctor.email?.split("@")[0] || "Doctor"}
+                  </Badge>
+                </div>
 
-            {records.length === 0 && (
-              <TableRow>
-                <TableCell className="text-gray-500" colSpan={5}>
-                  No medical records found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                {/* Content Grid */}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Chief Complaint
+                    </p>
+                    <p className="mt-1 font-medium">
+                      {record.chiefComplaint || "Not specified"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Diagnosis
+                    </p>
+                    <p className="mt-1 font-medium">
+                      {record.diagnosis || "Pending"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Treatment */}
+                {record.treatment && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Treatment
+                    </p>
+                    <p className="mt-1">{record.treatment}</p>
+                  </div>
+                )}
+
+                {/* Prescriptions */}
+                {record.prescriptions && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                      Prescriptions
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {String(record.prescriptions).split(",").map((rx: string, idx: number) => (
+                        <Badge
+                          key={idx}
+                          variant="secondary"
+                          className="bg-green-50 text-green-700 border-green-200"
+                        >
+                          {rx.trim()}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Clinical Notes */}
+                {record.notes && (
+                  <div className="rounded-lg bg-muted/50 p-4">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                      Clinical Notes
+                    </p>
+                    <p className="text-sm">{record.notes}</p>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-2 pt-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/medical-records/${record.id}`}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      View Full Record
+                    </Link>
+                  </Button>
+                  {user.role === "DOCTOR" && (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/medical-records/${record.id}/edit`}>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Edit
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+
+        {records.length === 0 && (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                <FileText className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground">No medical records found.</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
 }
-

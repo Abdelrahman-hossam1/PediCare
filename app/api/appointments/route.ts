@@ -11,6 +11,8 @@ const canManageAppointments = (role: string | null) => ["ADMIN", "RECEPTIONIST"]
 const AppointmentCreateSchema = z.object({
   patientId: z.string(),
   doctorId: z.string(),
+  // required in Prisma schema; default keeps backward compatibility with older clients
+  type: z.string().min(1).default("Consultation"),
   startsAt: z.string().datetime(),
   notes: z.string().optional(),
 });
@@ -55,13 +57,15 @@ export async function GET(req: Request) {
     if (doctorId) where.doctorId = doctorId;
     if (status) where.status = status;
 
-    // Default behavior: today's appointments unless a date is provided
-    const day = date ? new Date(date) : new Date();
-    const startDate = new Date(day);
-    startDate.setHours(0, 0, 0, 0);
-    const endDate = new Date(startDate);
+    // Date filter (optional). If not provided, return all matching appointments.
+    if (date) {
+      const day = new Date(date);
+      const startDate = new Date(day);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 1);
-    where.startsAt = { gte: startDate, lt: endDate };
+      where.startsAt = { gte: startDate, lt: endDate };
+    }
 
     if (user.role === "DOCTOR") where.doctorId = user.id;
 
@@ -147,6 +151,7 @@ export async function POST(req: Request) {
       data: {
         patientId: data.patientId,
         doctorId: data.doctorId,
+        type: data.type,
         startsAt,
         notes: data.notes,
         status: "SCHEDULED",

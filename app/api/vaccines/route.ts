@@ -14,6 +14,7 @@ export async function GET(req: Request) {
       select: {
         id: true,
         name: true,
+        manufacturer: true,
         stock: true,
         defaultPrice: true,
         availableFrom: true,
@@ -32,10 +33,11 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const user = await getCurrentUser(req);
   if (!user) return unauthorized();
-  if (!["ADMIN", "RECEPTIONIST"].includes(String(user.role))) return forbidden();
+  if (!["ADMIN", "DOCTOR"].includes(String(user.role))) return forbidden();
 
   const CreateVaccineSchema = z.object({
     name: z.string().min(1),
+    manufacturer: z.string().min(1).optional(),
     stock: z.coerce.number().int().nonnegative(),
     defaultPrice: z.coerce.number().int().nonnegative(),
     availableFrom: z.string().optional(),
@@ -51,11 +53,12 @@ export async function POST(req: Request) {
     );
   }
 
-  const { name, stock, defaultPrice, availableFrom, availableTo } = parsed.data;
+  const { name, manufacturer, stock, defaultPrice, availableFrom, availableTo } = parsed.data;
 
   const vaccine = await prisma.vaccine.create({
     data: {
       name,
+      manufacturer: manufacturer ?? null,
       stock,
       defaultPrice,
       availableFrom: availableFrom ? new Date(availableFrom) : null,

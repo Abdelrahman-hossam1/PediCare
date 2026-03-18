@@ -27,6 +27,10 @@ const PatientCreateSchema = z.object({
   notes: z.string().optional(),
 });
 
+const PatientDeleteSchema = z.object({
+  id: z.string().min(1, "Patient id is required"),
+});
+
 export async function GET(req: Request) {
   try {
     const user = await getCurrentUser(req);
@@ -72,6 +76,76 @@ export async function POST(req: Request) {
     return NextResponse.json(patient, { status: 201 });
   } catch (error) {
     console.error("POST /api/patients error:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const user = await getCurrentUser(req);
+    if (!user) return unauthorized();
+    if (!canWrite(user.role)) return forbidden();
+
+    const url = new URL(req.url);
+    const idFromQuery = url.searchParams.get("id");
+
+    const body = idFromQuery ? null : await req.json().catch(() => null);
+    const parsed = PatientDeleteSchema.safeParse({ id: idFromQuery ?? body?.id });
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { message: "Validation error", errors: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { id } = parsed.data;
+
+    const deleted = await prisma.$transaction(async (tx) => {
+      const patient = await tx.patient.findUnique({ where: { id } });
+      if (!patient) return null;
+
+      // Restore vaccine stock for any vaccine items on this patient's invoices
+      const vaccineItems = await tx.invoiceItem.findMany({
+        where: {
+          type: "VACCINE",
+          vaccineId: { not: null },
+          invoice: { appointment: { patientId: id } },
+        },
+        select: { vaccineId: true, quantity: true },
+      });
+
+      const increments = new Map<string, number>();
+      for (const item of vaccineItems) {
+        if (!item.vaccineId) continue;
+        increments.set(item.vaccineId, (increments.get(item.vaccineId) ?? 0) + item.quantity);
+      }
+
+      for (const [vaccineId, qty] of increments) {
+        await tx.vaccine.update({
+          where: { id: vaccineId },
+          data: { stock: { increment: qty } },
+        });
+      }
+
+      // Delete children first (no cascade specified in schema)
+      await tx.payment.deleteMany({ where: { invoice: { appointment: { patientId: id } } } });
+      await tx.invoiceItem.deleteMany({ where: { invoice: { appointment: { patientId: id } } } });
+      await tx.invoice.deleteMany({ where: { appointment: { patientId: id } } });
+      await tx.medicalRecord.deleteMany({ where: { patientId: id } });
+      await tx.appointment.deleteMany({ where: { patientId: id } });
+      await tx.patient.delete({ where: { id } });
+
+      return patient;
+    });
+
+    if (!deleted) {
+      return NextResponse.json({ message: "Patient not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Patient deleted" }, { status: 200 });
+  } catch (error) {
+    console.error("DELETE /api/patients error:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

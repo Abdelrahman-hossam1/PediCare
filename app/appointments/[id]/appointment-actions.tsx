@@ -1,16 +1,17 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { InvoiceActions } from "./components/invoice-actions";
-import { InvoiceDetails } from "./components/invoice-details";
 import { StatusRow } from "./components/status-row";
 import { VaccineRow } from "./components/vaccine-row";
 import type { Invoice, Vaccine } from "./types";
+import { DeleteAppointmentButton } from "../delete-appointment-button";
+import { useConfirmDialog } from "@/components/confirm-dialog-provider";
 
 export default function AppointmentActions({ id, currentStatus }: { id: string; currentStatus: string }) {
   const router = useRouter();
+  const confirmDialog = useConfirmDialog();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(currentStatus);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +65,10 @@ export default function AppointmentActions({ id, currentStatus }: { id: string; 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  useEffect(() => {
+    setStatus(currentStatus);
+  }, [currentStatus]);
+
   async function updateStatus() {
     setLoading(true);
     setError(null);
@@ -83,26 +88,7 @@ export default function AppointmentActions({ id, currentStatus }: { id: string; 
       return;
     }
 
-    router.refresh();
-  }
-
-  async function deleteAppointment() {
-    if (!confirm("Delete this appointment?")) return;
-
-    setLoading(true);
-    setError(null);
-
-    const res = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
-    const body = await res.json().catch(() => null);
-
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(body?.message || "Failed to delete");
-      return;
-    }
-
-    router.push("/appointments");
+    // Update server-rendered badge/header without full page reload
     router.refresh();
   }
 
@@ -227,33 +213,37 @@ export default function AppointmentActions({ id, currentStatus }: { id: string; 
       />
 
       <InvoiceActions
-        hasInvoice={Boolean(invoice)}
+        invoice={invoice}
         loading={loading}
         onCreate={async () => {
           setError(null);
           const created = await createInvoice();
-          if (created) router.refresh();
+          // invoice-actions will re-render based on local state;
+          // parent page can be refreshed if needed elsewhere.
         }}
         onDelete={async () => {
           if (!invoice) return;
-          if (!confirm("Delete this invoice? This will also delete its payments and restore vaccine stock.")) return;
+          const ok = await confirmDialog({
+            title: "Delete invoice?",
+            description: "This will also delete its payments and restore vaccine stock.",
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            confirmVariant: "destructive",
+          });
+          if (!ok) return;
           setError(null);
-          const ok = await deleteInvoice(invoice.id);
-          if (ok) await loadVaccines(); // refresh stock only
+          const deleted = await deleteInvoice(invoice.id);
+          if (deleted) await loadVaccines(); // refresh stock only
         }}
+        onRemoveItem={removeInvoiceItem}
       />
 
-      {invoice ? (
-        <InvoiceDetails invoice={invoice} loading={loading} onRemoveItem={removeInvoiceItem} />
-      ) : null}
-
-      <Button
+      <DeleteAppointmentButton
+        appointmentId={id}
+        redirectTo="/appointments"
         disabled={loading}
-        onClick={deleteAppointment}
-        variant="outline"
-      >
-        Delete Appointment
-      </Button>
+        onError={(message) => setError(message)}
+      />
 
       {error && <p className="text-destructive text-sm">{error}</p>}
     </div>

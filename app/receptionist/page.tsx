@@ -2,14 +2,33 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/getCurrentUser";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CalendarDays, Clock, Users, CheckCircle2, UserPlus, CalendarPlus } from "lucide-react";
+import { CheckInAppointmentButton } from "@/app/appointments/delete-appointment-button";
+
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
+}
+
+function getStatusBadge(status: string) {
+  switch (status) {
+    case "SCHEDULED":
+      return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Scheduled</Badge>;
+    case "CONFIRMED":
+      return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Checked In</Badge>;
+    case "COMPLETED":
+      return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">Completed</Badge>;
+    case "CANCELED":
+      return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Canceled</Badge>;
+    case "NO_SHOW":
+      return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">No Show</Badge>;
+    default:
+      return <Badge variant="outline">{status}</Badge>;
+  }
+}
 
 export default async function ReceptionistPage() {
   const user = await getCurrentUser();
@@ -24,7 +43,7 @@ export default async function ReceptionistPage() {
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
 
-  const today = await prisma.appointment.findMany({
+  const appointments = await prisma.appointment.findMany({
     where: { startsAt: { gte: start, lt: end } },
     orderBy: { startsAt: "asc" },
     include: {
@@ -34,60 +53,174 @@ export default async function ReceptionistPage() {
     },
   });
 
+  // Calculate stats
+  const totalToday = appointments.length;
+  const waiting = appointments.filter(a => a.status === "SCHEDULED").length;
+  const checkedIn = appointments.filter(a => a.status === "CONFIRMED").length;
+  const completed = appointments.filter(a => a.status === "COMPLETED").length;
+
+  const stats = [
+    {
+      label: "Today's Appointments",
+      value: totalToday,
+      icon: CalendarDays,
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      label: "Waiting",
+      value: waiting,
+      icon: Clock,
+      color: "text-orange-600",
+      bgColor: "bg-orange-50"
+    },
+    {
+      label: "Checked In",
+      value: checkedIn,
+      icon: Users,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
+    },
+    {
+      label: "Completed",
+      value: completed,
+      icon: CheckCircle2,
+      color: "text-green-600",
+      bgColor: "bg-green-50"
+    },
+  ];
+
+  // Get appointments that are not completed
+  const activeAppointments = appointments.filter(a => a.status !== "COMPLETED" && a.status !== "CANCELED");
+
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="rounded-md bg-primary px-4 py-2 text-2xl font-semibold text-primary-foreground">
-          Receptionist
-        </h1>
-        <Link href="/appointments/new" className="rounded-md bg-primary px-4 py-2 text-primary-foreground">
-          Create appointment
-        </Link>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Receptionist Dashboard</h1>
+          <p className="text-muted-foreground">Manage today&apos;s appointments and patient check-ins</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/patients/new">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Patient
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/appointments/new">
+              <CalendarPlus className="h-4 w-4 mr-2" />
+              New Appointment
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <div className="rounded-lg border overflow-hidden">
-        <Table>
-          <TableHeader className="bg-primary text-primary-foreground">
-            <TableRow className="hover:bg-primary">
-              <TableHead className="text-primary-foreground">Time</TableHead>
-              <TableHead className="text-primary-foreground">Patient</TableHead>
-              <TableHead className="text-primary-foreground">Doctor</TableHead>
-              <TableHead className="text-primary-foreground">Status</TableHead>
-              <TableHead className="text-primary-foreground">Record</TableHead>
-              <TableHead className="text-primary-foreground">Open</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {today.map((a) => (
-              <TableRow key={a.id}>
-                <TableCell>{new Date(a.startsAt).toLocaleString()}</TableCell>
-                <TableCell>
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={stat.label} className="relative overflow-hidden">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
                   <div>
-                    {a.patient.firstName} {a.patient.lastName}
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-3xl font-bold mt-1">{stat.value}</p>
                   </div>
-                  <div className="text-gray-500">{a.patient.phone}</div>
-                </TableCell>
-                <TableCell>{a.doctor.email}</TableCell>
-                <TableCell>{a.status}</TableCell>
-                <TableCell>{a.medicalRecord ? "Yes" : "No"}</TableCell>
-                <TableCell>
-                  <Link className="underline" href={`/appointments/${a.id}`}>
-                    View
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
-            {today.length === 0 && (
-              <TableRow>
-                <TableCell className="text-gray-500" colSpan={6}>
-                  No appointments today.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                  <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                    <Icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Today's Appointments */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Today&apos;s Appointments</h2>
+        <div className="space-y-3">
+          {activeAppointments.map((appointment) => (
+            <Card key={appointment.id} className="overflow-hidden hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between gap-4">
+                  {/* Patient Info */}
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12 bg-primary">
+                      <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+                        {getInitials(appointment.patient.firstName, appointment.patient.lastName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">
+                        {appointment.patient.firstName} {appointment.patient.lastName}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {appointment.patient.phone}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Doctor */}
+                  <div className="hidden md:block">
+                    <p className="text-sm text-muted-foreground">Doctor</p>
+                    <p className="font-medium">{appointment.doctor.email?.split("@")[0]}</p>
+                  </div>
+
+                  {/* Time & Status */}
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="font-medium">
+                        {new Date(appointment.startsAt).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(appointment.startsAt).toLocaleDateString("en-CA")}
+                      </p>
+                    </div>
+
+                    {getStatusBadge(appointment.status)}
+
+                    <div className="flex gap-2">
+                      {appointment.status === "SCHEDULED" && (
+                        <CheckInAppointmentButton appointmentId={appointment.id} />
+                      )}
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/appointments/${appointment.id}`}>
+                          View
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {activeAppointments.length === 0 && (
+            <Card>
+              <CardContent className="p-8 text-center text-muted-foreground">
+                No active appointments for today.
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="flex gap-3">
+        <Button variant="outline" asChild>
+          <Link href="/appointments">View All Appointments</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link href="/patients">View All Patients</Link>
+        </Button>
       </div>
     </div>
   );
 }
-

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useConfirmDialog } from "@/components/confirm-dialog-provider";
 
 export default function MedicalRecordActions({
   id,
@@ -23,6 +24,7 @@ export default function MedicalRecordActions({
   locked: boolean;
 }) {
   const router = useRouter();
+  const confirmDialog = useConfirmDialog();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState(initial.diagnosis ?? "");
@@ -53,7 +55,14 @@ export default function MedicalRecordActions({
   }
 
   async function del() {
-    if (!confirm("Delete this medical record?")) return;
+    const ok = await confirmDialog({
+      title: "Delete medical record?",
+      description: "This will permanently delete the medical record.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      confirmVariant: "destructive",
+    });
+    if (!ok) return;
     setLoading(true);
     setError(null);
     try {

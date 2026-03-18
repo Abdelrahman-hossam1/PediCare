@@ -101,7 +101,7 @@ model Appointment {
 
   patientId String
   doctorId  String
-
+  type      String
   startsAt DateTime
   status   AppointmentStatus @default(SCHEDULED)
   notes    String?
@@ -199,11 +199,23 @@ model InvoiceItem {
   updatedAt DateTime @updatedAt
 }
 
+/* ===================== SERVICES ===================== */
+
+model Service {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  defaultPrice Int
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 /* ===================== VACCINES ===================== */
 
 model Vaccine {
   id        String   @id @default(cuid())
   name      String
+  manufacturer String?
   stock     Int
   defaultPrice Int
   availableFrom DateTime?
