@@ -1,5 +1,6 @@
-// app/appointments/[id]/page.tsx
-import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import Link from "next/link";
 import AppointmentActions from "./appointment-actions";
 import { Button } from "@/components/ui/button";
@@ -41,22 +42,43 @@ function getStatusBadge(status: string) {
   }
 }
 
-async function getAppointment(id: string): Promise<Appointment | null> {
-  const token = (await cookies()).get("token")?.value;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-  const res = await fetch(`${baseUrl}/api/appointments/${id}`, {
-    cache: "no-store",
-    headers: token ? { cookie: `token=${token}` } : {},
-  });
-
-  if (!res.ok) return null;
-  return res.json();
-}
+// Data fetching handled directly in server component
 
 export default async function AppointmentPage({ params }: { params: { id: string } }) {
   const { id } = await (params as unknown as Promise<{ id: string }>);
-  const a = await getAppointment(id);
+
+  const user = await getCurrentUser();
+  if (!user) return redirect("/login");
+
+  const a = await prisma.appointment.findUnique({
+    where: { id },
+    include: {
+      patient: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true,
+        },
+      },
+      doctor: {
+        select: {
+          id: true,
+          email: true,
+          role: true,
+        },
+      },
+      medicalRecord: {
+        select: { id: true },
+      },
+    },
+  }) as unknown as Appointment | null;
+
+  // RBAC Check: Doctors can only see their own appointments
+  if (user.role === "DOCTOR" && a && a.doctor.id !== user.id) {
+    return <div className="p-6">Forbidden.</div>;
+  }
 
   if (!a) {
     return (

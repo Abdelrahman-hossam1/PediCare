@@ -21,10 +21,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { prisma } from "@/lib/prisma";
+import { canRead } from "@/lib/rbac";
 import { DeleteAppointmentButton } from "./delete-appointment-button";
 import { CalendarPlus, Search, Filter } from "lucide-react";
 
 
+// Data fetching moved directly into the server component below.
 type Appointment = {
   id: string;
   startsAt: Date;
@@ -68,21 +71,7 @@ function getStatusBadge(status: string) {
   }
 }
 
-async function getAppointments(queryString: string): Promise<Appointment[]> {
-  const token = (await cookies()).get("token")?.value;
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-
-  const res = await fetch(`${baseUrl}/api/appointments${queryString}`, {
-    cache: "default",
-    headers: token ? { cookie: `token=${token}` } : {},
-  });
-
-  if (!res.ok) {
-    return [];
-  }
-  return (await res.json()) as Appointment[];
-}
+// Removed getAppointments fetch function in favor of direct server-side data fetching
 
 export default async function AppointmentsPage({
   searchParams,
@@ -94,14 +83,50 @@ export default async function AppointmentsPage({
   const canDelete =
     !!user && ["ADMIN", "RECEPTIONIST"].includes(String(user.role));
 
-  const qs = new URLSearchParams();
-  if (sp.doctorId) qs.set("doctorId", sp.doctorId);
-  if (sp.status) qs.set("status", sp.status);
-  if (sp.date) qs.set("date", sp.date);
+  // DB Query Logic (replacing internal fetch)
+  // Fetch appointments directly using Prisma
+  const where: any = {};
+  if (sp.doctorId) where.doctorId = sp.doctorId;
+  if (sp.status) where.status = sp.status;
+  if (sp.date) {
+    const day = new Date(sp.date);
+    const startDate = new Date(day);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 1);
+    where.startsAt = { gte: startDate, lt: endDate };
+  }
 
-  const queryString = qs.toString() ? `?${qs.toString()}` : "";
+  // Doctor RBAC check
+  if (user && user.role === "DOCTOR") {
+    where.doctorId = user.id;
+  }
 
-  const appointments = await getAppointments(queryString);
+  const appointments = await prisma.appointment.findMany({
+    where,
+    include: {
+      patient: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true,
+        },
+      },
+      doctor: {
+        select: {
+          id: true,
+          email: true,
+          role: true,
+        },
+      },
+      medicalRecord: {
+        select: { id: true },
+      },
+    },
+    orderBy: { startsAt: "asc" },
+  }) as unknown as Appointment[];
 
   return (
     <div className="space-y-6">
