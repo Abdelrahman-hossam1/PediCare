@@ -35,7 +35,7 @@ export default async function LandingPage() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Stethoscope className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight">Clinic<span className="text-primary">Flow</span></span>
+            <span className="text-xl font-bold tracking-tight">Pedi<span className="text-primary">Care</span></span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
@@ -72,7 +72,7 @@ export default async function LandingPage() {
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-400">elevate patient care.</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000">
-            ClinicFlow is a modern, all-in-one platform designed for clinics to manage patients, schedule appointments, and digitize medical records seamlessly.
+            PediCare is a modern, all-in-one platform designed for clinics to manage patients, schedule appointments, and digitize medical records seamlessly.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-6 animate-in fade-in slide-in-from-bottom-6 duration-1000">
             <Link href="/login">
@@ -91,7 +91,7 @@ export default async function LandingPage() {
       <section id="solutions" className="py-24 bg-muted/30 border-y relative z-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold">Why ClinicFlow?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">Why PediCare?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">We solve the core administrative challenges that modern clinics face every day.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-12">
@@ -327,9 +327,9 @@ export default async function LandingPage() {
             <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
               <Stethoscope className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-foreground">ClinicFlow</span>
+            <span className="font-bold text-foreground">PediCare</span>
           </div>
-          <p className="mb-2">&copy; 2026 ClinicFlow Management System. All rights reserved.</p>
+          <p className="mb-2">&copy; 2026 PediCare Management System. All rights reserved.</p>
           <div className="flex items-center justify-center gap-6 mt-4">
             <a href="#" className="hover:text-primary transition-colors">Privacy</a>
             <a href="#" className="hover:text-primary transition-colors">Terms</a>
