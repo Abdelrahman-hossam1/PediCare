@@ -6,9 +6,13 @@ const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClient | undefined
 }
 
-const connectionString = process.env.DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
 
-const pool = new pg.Pool({ connectionString })
+if (!connectionString && process.env.NODE_ENV === "production") {
+    throw new Error("DATABASE_URL is not set in production environment variables");
+}
+
+const pool = new pg.Pool({ connectionString });
 const adapter = new PrismaPg(pool)
 
 export const prisma =
