@@ -7,7 +7,9 @@ datasource db {
   provider = "postgresql"
 }
 
-/* ===================== ENUMS ===================== */
+/**
+ * ===================== ENUMS =====================
+ */
 
 enum Role {
   DOCTOR
@@ -56,7 +58,9 @@ enum DiscountType {
   FIXED
 }
 
-/* ===================== MODELS ===================== */
+/**
+ * ===================== MODELS =====================
+ */
 
 model User {
   id           String   @id @default(cuid())
@@ -67,7 +71,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  doctorAppointments Appointment[] @relation("DoctorAppointments")
+  doctorAppointments Appointment[]   @relation("DoctorAppointments")
   medicalRecords     MedicalRecord[] @relation("DoctorMedicalRecords")
   paymentsHandled    Payment[]
 }
@@ -102,9 +106,9 @@ model Appointment {
   patientId String
   doctorId  String
   type      String
-  startsAt DateTime
-  status   AppointmentStatus @default(SCHEDULED)
-  notes    String?
+  startsAt  DateTime
+  status    AppointmentStatus @default(SCHEDULED)
+  notes     String?
 
   patient Patient @relation(fields: [patientId], references: [id])
   doctor  User    @relation("DoctorAppointments", fields: [doctorId], references: [id])
@@ -144,21 +148,23 @@ model MedicalRecord {
   @@index([doctorId, createdAt])
 }
 
-/* ===================== FINANCIALS ===================== */
+/**
+ * ===================== FINANCIALS =====================
+ */
 
 model Invoice {
   id String @id @default(cuid())
 
   appointmentId String @unique
 
-  subtotal      Int      // sum of all invoice items before discount
+  subtotal      Int // sum of all invoice items before discount
   discountType  DiscountType?
-  discountValue Int?     // amount or percentage
-  total         Int      // final amount after discount
+  discountValue Int? // amount or percentage
+  total         Int // final amount after discount
 
   isPaid Boolean @default(false)
 
-  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  appointment Appointment   @relation(fields: [appointmentId], references: [id])
   payments    Payment[]
   items       InvoiceItem[]
 
@@ -176,7 +182,7 @@ model Payment {
   status PaymentStatus @default(PAID)
 
   handledById String
-  handledBy   User @relation(fields: [handledById], references: [id])
+  handledBy   User   @relation(fields: [handledById], references: [id])
 
   invoice Invoice @relation(fields: [invoiceId], references: [id])
 
@@ -186,20 +192,22 @@ model Payment {
 model InvoiceItem {
   id        String @id @default(cuid())
   invoiceId String
-  name      String      // vaccine name or service name
-  price     Int         // price for this appointment (override default price)
-  quantity  Int @default(1)
-  type      String      // "VACCINE" or "SERVICE"
+  name      String // vaccine name or service name
+  price     Int // price for this appointment (override default price)
+  quantity  Int    @default(1)
+  type      String // "VACCINE" or "SERVICE"
 
-  vaccineId String?     // optional link if it's a vaccine
-  invoice   Invoice     @relation(fields: [invoiceId], references: [id])
-  vaccine   Vaccine?    @relation(fields: [vaccineId], references: [id])
+  vaccineId String? // optional link if it's a vaccine
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  vaccine   Vaccine? @relation(fields: [vaccineId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-/* ===================== SERVICES ===================== */
+/**
+ * ===================== SERVICES =====================
+ */
 
 model Service {
   id           String   @id @default(cuid())
@@ -210,14 +218,16 @@ model Service {
   updatedAt    DateTime @updatedAt
 }
 
-/* ===================== VACCINES ===================== */
+/**
+ * ===================== VACCINES =====================
+ */
 
 model Vaccine {
-  id        String   @id @default(cuid())
-  name      String
-  manufacturer String?
-  stock     Int
-  defaultPrice Int
+  id            String    @id @default(cuid())
+  name          String
+  manufacturer  String?
+  stock         Int
+  defaultPrice  Int
   availableFrom DateTime?
   availableTo   DateTime?
 
@@ -226,4 +236,3 @@ model Vaccine {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-  

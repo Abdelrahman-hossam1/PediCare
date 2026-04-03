@@ -13,7 +13,9 @@ export async function middleware(request: NextRequest) {
     "/api/dev", // Dev routes (remove in production)
   ];
 
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
+  const isPublicRoute =
+    pathname === "/" ||
+    publicRoutes.some((route) => pathname.startsWith(route));
 
   if (isPublicRoute) {
     return NextResponse.next();

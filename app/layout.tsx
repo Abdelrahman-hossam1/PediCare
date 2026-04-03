@@ -42,7 +42,7 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
-              <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6">
+                <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6">
                   <div className="flex items-center gap-2">
                     <SidebarTrigger />
                   </div>
@@ -55,7 +55,7 @@ export default async function RootLayout({
               </SidebarInset>
             </SidebarProvider>
           ) : (
-            <main className="mx-auto w-full max-w-5xl px-4 py-6">{children}</main>
+            <main className="w-full">{children}</main>
           )}
         </ConfirmDialogProvider>
       </body>

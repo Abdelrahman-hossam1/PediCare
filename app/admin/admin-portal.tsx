@@ -314,7 +314,7 @@ export function AdminPortal() {
                 <TableHead className="w-[250px]">Vaccine Name</TableHead>
                 <TableHead>Manufacturer</TableHead>
                 <TableHead className="w-[200px]">Stock</TableHead>
-                <TableHead>Price (SAR)</TableHead>
+                <TableHead>Price (EGP)</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -430,7 +430,7 @@ export function AdminPortal() {
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead>Service</TableHead>
-                <TableHead className="text-right">Price (SAR)</TableHead>
+                <TableHead className="text-right">Price (EGP)</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -637,7 +637,7 @@ export function AdminPortal() {
                 />
               </div>
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Price (SAR)</label>
+                <label className="text-sm font-medium">Price (EGP)</label>
                 <Input
                   value={vaccineDraft.price}
                   onChange={(e) => setVaccineDraft((p) => ({ ...p, price: e.target.value }))}
