@@ -27,9 +27,9 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-primary/20">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -37,7 +37,7 @@ export default async function LandingPage() {
             </div>
             <span className="text-xl font-bold tracking-tight">Clinic<span className="text-primary">Flow</span></span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
             <a href="#solutions" className="hover:text-primary transition-colors">Solutions</a>
             <a href="#demo" className="hover:text-primary transition-colors">Demo</a>
@@ -56,22 +56,22 @@ export default async function LandingPage() {
             src="/hero-section.jpg"
             alt="Clinic Hero Background"
             fill
-            className="object-cover opacity-80"
+            className="object-cover opacity-30 transition-opacity duration-1000"
             priority
           />
           {/* Professional Overlay for Text Contrast */}
-          <div className="absolute inset-0 bg-linear-to-b from-white/40 via-white/10 to-white" />
+          <div className="absolute inset-0 bg-linear-to-b from-background/40 via-background/60 to-background" />
         </div>
 
         <div className="container relative z-10 mx-auto px-4 text-center space-y-8">
           <div className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 mb-4 animate-in fade-in slide-in-from-bottom-3 duration-1000">
             Professional Clinic Management System
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground animate-in fade-in slide-in-from-bottom-4 duration-1000">
             Streamline your practice, <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600">elevate patient care.</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-400">elevate patient care.</span>
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000">
             ClinicFlow is a modern, all-in-one platform designed for clinics to manage patients, schedule appointments, and digitize medical records seamlessly.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-6 animate-in fade-in slide-in-from-bottom-6 duration-1000">
@@ -84,59 +84,58 @@ export default async function LandingPage() {
         </div>
 
         {/* Background Decorative Elements */}
-        <div className="absolute top-0 -z-10 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-linear-to-b from-primary/5 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="absolute top-0 -z-10 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-linear-to-b from-primary/5 to-transparent rounded-full blur-3xl opacity-30" />
       </section>
 
       {/* Problems & Solutions Section */}
-      <section id="solutions" className="py-24 bg-slate-50 border-y relative z-20">
+      <section id="solutions" className="py-24 bg-muted/30 border-y relative z-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold">Why ClinicFlow?</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">We solve the core administrative challenges that modern clinics face every day.</p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">We solve the core administrative challenges that modern clinics face every day.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-12">
-            {/* Problems list */}
-            <div className="space-y-4 p-6 rounded-2xl bg-white shadow-sm border border-slate-100">
-              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 mb-6">
+            <div className="space-y-4 p-6 rounded-2xl bg-card shadow-sm border border-border">
+              <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 mb-6">
                 <Users className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold">The Problem</h3>
-              <p className="text-slate-600">Manual patient record-keeping is slow, prone to errors, and difficult to search through during consultations.</p>
-              <div className="pt-4 flex items-start gap-2 text-green-600">
+              <p className="text-muted-foreground">Manual patient record-keeping is slow, prone to errors, and difficult to search through during consultations.</p>
+              <div className="pt-4 flex items-start gap-2 text-primary">
                 <CheckCircle2 className="w-5 h-5 mt-0.5" />
                 <div>
                   <p className="font-bold">Our Solution</p>
-                  <p className="text-sm text-slate-500">A centralized, searchable digital patient registry with full medical history at your fingertips.</p>
+                  <p className="text-sm text-muted-foreground">A centralized, searchable digital patient registry with full medical history at your fingertips.</p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 p-6 rounded-2xl bg-white shadow-sm border border-slate-100">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
+            <div className="space-y-4 p-6 rounded-2xl bg-card shadow-sm border border-border">
+              <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 mb-6">
                 <CalendarDays className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold">The Problem</h3>
-              <p className="text-slate-600">Double-bookings and missed appointments lead to lost revenue and unhappy patients.</p>
-              <div className="pt-4 flex items-start gap-2 text-green-600">
+              <p className="text-muted-foreground">Double-bookings and missed appointments lead to lost revenue and unhappy patients.</p>
+              <div className="pt-4 flex items-start gap-2 text-primary">
                 <CheckCircle2 className="w-5 h-5 mt-0.5" />
                 <div>
                   <p className="font-bold">Our Solution</p>
-                  <p className="text-sm text-slate-500">Real-time appointment scheduling with smart conflict detection and status tracking.</p>
+                  <p className="text-sm text-muted-foreground">Real-time appointment scheduling with smart conflict detection and status tracking.</p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 p-6 rounded-2xl bg-white shadow-sm border border-slate-100">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6">
+            <div className="space-y-4 p-6 rounded-2xl bg-card shadow-sm border border-border">
+              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-500 mb-6">
                 <CreditCard className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold">The Problem</h3>
-              <p className="text-slate-600">Complex billing for services and vaccines makes financial tracking a repetitive nightmare.</p>
-              <div className="pt-4 flex items-start gap-2 text-green-600">
+              <p className="text-muted-foreground">Complex billing for services and vaccines makes financial tracking a repetitive nightmare.</p>
+              <div className="pt-4 flex items-start gap-2 text-primary">
                 <CheckCircle2 className="w-5 h-5 mt-0.5" />
                 <div>
                   <p className="font-bold">Our Solution</p>
-                  <p className="text-sm text-slate-500">Automated invoicing and payment tracking built directly into the patient workflow.</p>
+                  <p className="text-sm text-muted-foreground">Automated invoicing and payment tracking built directly into the patient workflow.</p>
                 </div>
               </div>
             </div>
@@ -145,41 +144,41 @@ export default async function LandingPage() {
       </section>
 
       {/* Feature Showcase */}
-      <section id="features" className="py-24 bg-white relative z-20">
+      <section id="features" className="py-24 bg-background relative z-20">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Built for every role in your clinic.</h2>
-                <p className="text-lg text-slate-600">Our platform provides specialized interfaces tailored to the unique needs of your staff.</p>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Built for every role in your clinic.</h2>
+                <p className="text-lg text-muted-foreground">Our platform provides specialized interfaces tailored to the unique needs of your staff.</p>
               </div>
 
               <div className="space-y-6">
                 <div className="flex gap-4">
-                  <div className="shrink-0 w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">Admin Control</h4>
-                    <p className="text-slate-600 font-medium">Manage services, vaccines, and user roles. Deep visibility into clinic operations.</p>
+                    <p className="text-muted-foreground font-medium">Manage services, vaccines, and user roles. Deep visibility into clinic operations.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="shrink-0 w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                     <LayoutDashboard className="w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">Receptionist Portal</h4>
-                    <p className="text-slate-600 font-medium">Fast patient registration, appointment booking, and instant invoice generation.</p>
+                    <p className="text-muted-foreground font-medium">Fast patient registration, appointment booking, and instant invoice generation.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="shrink-0 w-12 h-12 bg-primary/5 text-primary rounded-xl flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                     <FileText className="w-6 h-6" />
                   </div>
                   <div>
                     <h4 className="font-bold text-lg">Doctor Dashboard</h4>
-                    <p className="text-slate-600 font-medium">Streamlined medical records, diagnosis tracking, and treatment history.</p>
+                    <p className="text-muted-foreground font-medium">Streamlined medical records, diagnosis tracking, and treatment history.</p>
                   </div>
                 </div>
               </div>
@@ -188,10 +187,10 @@ export default async function LandingPage() {
             <div className="relative">
               <div className="aspect-square bg-linear-to-br from-primary/20 to-blue-500/10 rounded-3xl overflow-hidden shadow-2xl relative p-8 flex flex-col gap-6">
                 {/* Analytics card 1 */}
-                <div className="bg-white/90 backdrop-blur shadow-lg rounded-xl p-4 border border-slate-100 animate-in fade-in slide-in-from-right-4 duration-700 delay-100">
+                <div className="bg-card/90 backdrop-blur shadow-lg rounded-xl p-4 border border-border animate-in fade-in slide-in-from-right-4 duration-700 delay-100">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-bold text-slate-700">Monthly Patients</span>
-                    <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+12.5%</span>
+                    <span className="text-sm font-bold text-foreground">Monthly Patients</span>
+                    <span className="text-xs font-medium text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full">+12.5%</span>
                   </div>
                   <div className="flex items-end gap-1 h-20">
                     <div className="flex-1 bg-primary/20 rounded-t-sm h-[40%] animate-in zoom-in duration-1000 delay-200" />
@@ -203,9 +202,9 @@ export default async function LandingPage() {
                 </div>
 
                 {/* Analytics card 2 */}
-                <div className="bg-white/90 backdrop-blur shadow-lg rounded-xl p-4 border border-slate-100 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
+                <div className="bg-card/90 backdrop-blur shadow-lg rounded-xl p-4 border border-border animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-bold text-slate-700">Appointment Types</span>
+                    <span className="text-sm font-bold text-foreground">Appointment Types</span>
                   </div>
                   <div className="space-y-3">
                     <div className="space-y-1">
@@ -213,7 +212,7 @@ export default async function LandingPage() {
                         <span>Checkups</span>
                         <span>65%</span>
                       </div>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                         <div className="bg-blue-500 h-full w-[65%] animate-in slide-in-from-left duration-1000 delay-500" />
                       </div>
                     </div>
@@ -222,7 +221,7 @@ export default async function LandingPage() {
                         <span>Vaccinations</span>
                         <span>25%</span>
                       </div>
-                      <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                      <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
                         <div className="bg-purple-500 h-full w-[25%] animate-in slide-in-from-left duration-1000 delay-700" />
                       </div>
                     </div>
@@ -230,15 +229,15 @@ export default async function LandingPage() {
                 </div>
 
                 {/* Activity Feed mockup */}
-                <div className="bg-white/90 backdrop-blur shadow-lg rounded-xl p-4 border border-slate-100 flex-1 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
-                  <span className="text-sm font-bold text-slate-700 block mb-3">Recent Activity</span>
+                <div className="bg-card/90 backdrop-blur shadow-lg rounded-xl p-4 border border-border flex-1 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                  <span className="text-sm font-bold text-foreground block mb-3">Recent Activity</span>
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                       <div key={i} className="flex gap-3 items-center">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse" />
+                        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
                         <div className="flex-1 space-y-2">
-                          <div className="h-2 bg-slate-100 rounded w-3/4 animate-pulse" />
-                          <div className="h-2 bg-slate-50 rounded w-1/2 animate-pulse" />
+                          <div className="h-2 bg-muted rounded w-3/4 animate-pulse" />
+                          <div className="h-2 bg-muted/60 rounded w-1/2 animate-pulse" />
                         </div>
                       </div>
                     ))}
@@ -251,7 +250,7 @@ export default async function LandingPage() {
       </section>
 
       {/* Demo Access Section */}
-      <section id="demo" className="py-24 bg-primary text-white overflow-hidden relative z-20">
+      <section id="demo" className="py-24 bg-primary text-primary-foreground overflow-hidden relative z-20">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto space-y-12">
             <div className="text-center space-y-4">
@@ -322,13 +321,13 @@ export default async function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t bg-slate-50 relative z-20">
-        <div className="container mx-auto px-4 text-center text-slate-500 font-medium">
+      <footer className="py-12 border-t bg-muted relative z-20">
+        <div className="container mx-auto px-4 text-center text-muted-foreground font-medium">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-              <Stethoscope className="w-4 h-4 text-white" />
+              <Stethoscope className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-slate-900">ClinicFlow</span>
+            <span className="font-bold text-foreground">ClinicFlow</span>
           </div>
           <p className="mb-2">&copy; 2026 ClinicFlow Management System. All rights reserved.</p>
           <div className="flex items-center justify-center gap-6 mt-4">

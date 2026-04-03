@@ -67,11 +67,10 @@ export default function LoginPage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Soft overlay for readability (like the mock) */}
-      {/* <div className="absolute inset-0 bg-background/65 backdrop-blur-[1px]" /> */}
+      {/* Professional Overlay for Dark Mode Readability */}
+      <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px] z-0" />
 
-
-      <div className="relative z-10 min-h-full grid   items-center justify-center">
+      <div className="relative z-10 min-h-full grid items-center justify-center">
 
 
         {/* Login form */}

@@ -16,15 +16,15 @@ function getInitials(firstName: string, lastName: string): string {
 function getStatusBadge(status: string) {
   switch (status) {
     case "SCHEDULED":
-      return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Scheduled</Badge>;
+      return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20">Scheduled</Badge>;
     case "CONFIRMED":
-      return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Checked In</Badge>;
+      return <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/20">Checked In</Badge>;
     case "COMPLETED":
-      return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">Completed</Badge>;
+      return <Badge variant="outline" className="bg-muted text-muted-foreground border-border">Completed</Badge>;
     case "CANCELED":
-      return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Canceled</Badge>;
+      return <Badge variant="outline" className="bg-red-500/10 text-red-400 border-red-500/20">Canceled</Badge>;
     case "NO_SHOW":
-      return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">No Show</Badge>;
+      return <Badge variant="outline" className="bg-orange-500/10 text-orange-400 border-orange-500/20">No Show</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }
@@ -64,29 +64,29 @@ export default async function ReceptionistPage() {
       label: "Today's Appointments",
       value: totalToday,
       icon: CalendarDays,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      color: "text-blue-400",
+      bgColor: "bg-blue-500/10"
     },
     {
       label: "Waiting",
       value: waiting,
       icon: Clock,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50"
+      color: "text-orange-400",
+      bgColor: "bg-orange-500/10"
     },
     {
       label: "Checked In",
       value: checkedIn,
       icon: Users,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50"
+      color: "text-purple-400",
+      bgColor: "bg-purple-500/10"
     },
     {
       label: "Completed",
       value: completed,
       icon: CheckCircle2,
-      color: "text-green-600",
-      bgColor: "bg-green-50"
+      color: "text-green-400",
+      bgColor: "bg-green-500/10"
     },
   ];
 

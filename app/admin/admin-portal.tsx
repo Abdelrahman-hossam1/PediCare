@@ -56,7 +56,7 @@ async function jsonOrThrow(res: Response) {
 function getStockStatus(stock: number) {
   if (stock <= LOW_STOCK_THRESHOLD) {
     return {
-      badge: <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 gap-1">
+      badge: <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 gap-1">
         <AlertTriangle className="h-3 w-3" />
         Low Stock
       </Badge>,
@@ -64,7 +64,7 @@ function getStockStatus(stock: number) {
     };
   }
   return {
-    badge: <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">In Stock</Badge>,
+    badge: <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">In Stock</Badge>,
     progressColor: "bg-green-500",
   };
 }
@@ -270,8 +270,8 @@ export function AdminPortal() {
 
       {/* Alerts */}
       {message && (
-        <Alert className="bg-green-50 border-green-200">
-          <AlertDescription className="text-green-700">{message}</AlertDescription>
+        <Alert className="bg-green-500/10 border-green-500/20">
+          <AlertDescription className="text-green-500">{message}</AlertDescription>
         </Alert>
       )}
       {error && (
@@ -282,10 +282,10 @@ export function AdminPortal() {
 
       {/* Low Stock Alert */}
       {lowStockCount > 0 && (
-        <Alert className="bg-amber-50 border-amber-200">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertTitle className="text-amber-800">Low Stock Alert</AlertTitle>
-          <AlertDescription className="text-amber-700">
+        <Alert className="bg-amber-500/10 border-amber-500/20">
+          <AlertTriangle className="h-4 w-4 text-amber-500" />
+          <AlertTitle className="text-amber-500">Low Stock Alert</AlertTitle>
+          <AlertDescription className="text-amber-500/90">
             {lowStockCount} vaccine{lowStockCount !== 1 ? "s are" : " is"} running low on stock. Please reorder soon.
           </AlertDescription>
         </Alert>
@@ -526,7 +526,7 @@ export function AdminPortal() {
               />
             </div>
             <div className="grid gap-2">
-              <label className="text-sm font-medium">Price (SAR)</label>
+              <label className="text-sm font-medium">Price (EGP)</label>
               <Input
                 value={serviceDraft.price}
                 onChange={(e) => setServiceDraft((p) => ({ ...p, price: e.target.value }))}
