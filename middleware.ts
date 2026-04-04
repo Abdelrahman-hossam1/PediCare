@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyAuthToken } from "@/lib/auth";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require authentication
@@ -59,10 +59,12 @@ export async function proxy(request: NextRequest) {
   const userId = (decoded as any).userId ?? (decoded as any).id ?? "";
   const role = (decoded as any).role ?? "";
   const email = (decoded as any).email ?? "";
+  const sessionId = (decoded as any).sessionId ?? "";
 
   requestHeaders.set("x-user-id", String(userId));
   requestHeaders.set("x-user-role", String(role));
   requestHeaders.set("x-user-email", String(email));
+  requestHeaders.set("x-session-id", String(sessionId));
 
   return NextResponse.next({
     request: { headers: requestHeaders },

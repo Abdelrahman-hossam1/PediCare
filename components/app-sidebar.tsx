@@ -22,7 +22,6 @@ import {
   Building2
 } from "lucide-react"
 import { getCurrentUser } from "@/lib/getCurrentUser"
-import logoPng from "@/assets/images/logo.png"
 
 export async function AppSidebar() {
   const user = await getCurrentUser()
@@ -86,7 +85,7 @@ export async function AppSidebar() {
         <Link href="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
             <Image
-              src={logoPng}
+              src="/logo-v2.png"
               alt="PediCare"
               width={28}
               height={28}

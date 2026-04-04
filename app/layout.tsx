@@ -21,6 +21,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PediCare - Clinic Management",
   description: "Modern clinic management system",
+  icons: {
+    icon: [
+      {
+        url: "/logo-v2.png",
+        sizes: "any",
+        type: "image/png",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({

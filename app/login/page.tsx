@@ -13,8 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import logoPng from "@/assets/images/logo.png";
-import loginBackground from "@/assets/images/loginBG.png";
 
 const LoginSchema = z.object({
   // Treat as a normal text input (no client-side email format enforcement)
@@ -61,7 +59,7 @@ export default function LoginPage() {
     <div
       className="fixed inset-0 overflow-auto bg-cover bg-center"
       style={{
-        backgroundImage: `url(${loginBackground.src})`,
+        backgroundImage: `url('/loginBG.png')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -72,12 +70,22 @@ export default function LoginPage() {
 
       <div className="relative z-10 min-h-full grid items-center justify-center">
 
-
         {/* Login form */}
         <div className="flex items-start lg:items-center justify-center lg:justify-start  sm:p-8 pt-24 lg:pt-8 lg:pl-4 xl:pl-6">
           <div className="w-full lg:w-[400px]   space-y-4  ">
             <Card className="shadow-lg bg-background/80 backdrop-blur-md border-white/30  ">
-              <CardHeader className="space-y-1">
+              <CardHeader className="space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white/10 p-1.5 border border-white/20">
+                    <Image
+                      src="/logo-v2.png"
+                      alt="PediCare Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="text-xl font-bold tracking-tight">Pedi<span className="text-primary">Care</span></span>
+                </div>
                 <CardTitle className="text-2xl">Sign in</CardTitle>
                 <CardDescription>Use your clinic account to continue.</CardDescription>
               </CardHeader>
@@ -134,21 +142,21 @@ export default function LoginPage() {
                 </Form>
 
                 <div className="rounded-lg border bg-muted/40 p-4 text-sm ">
-                  <p className="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                  <p className="font-bold text-white mb-3 flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-primary" />
                     Demo Access Credentials
                   </p>
                   <div className="grid gap-3">
-                    <div className="flex items-center justify-between p-2 rounded bg-white shadow-sm border border-slate-100">
-                      <span className="font-medium text-slate-700">Admin</span>
+                    <div className="flex items-center justify-between p-2 rounded  shadow-sm border border-primary rounded-lg ">
+                      <span className="font-medium text-white">Admin</span>
                       <code className="text-primary font-mono font-bold">admin@clinic.com / admin123</code>
                     </div>
-                    <div className="flex items-center justify-between p-2 rounded bg-white shadow-sm border border-slate-100">
-                      <span className="font-medium text-slate-700">Doctor</span>
+                    <div className="flex items-center justify-between p-2 rounded  shadow-sm border border-primary rounded-lg">
+                      <span className="font-medium text-white">Doctor</span>
                       <code className="text-primary font-mono font-bold">doctor@clinic.com / doctor123</code>
                     </div>
-                    <div className="flex items-center justify-between p-2 rounded bg-white shadow-sm border border-slate-100">
-                      <span className="font-medium text-slate-700">Receptionist</span>
+                    <div className="flex items-center justify-between p-2 rounded  shadow-sm border border-primary rounded-lg">
+                      <span className="font-medium text-white">Receptionist</span>
                       <code className="text-primary font-mono font-bold">receptionist@clinic.com / receptionist123</code>
                     </div>
                   </div>

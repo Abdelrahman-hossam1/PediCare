@@ -31,10 +31,17 @@ export default async function LandingPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Stethoscope className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="relative w-10 h-10 overflow-hidden rounded-xl bg-white/5 p-1 border border-white/10">
+              <Image
+                src="/logo-v2.png"
+                alt="PediCare Logo"
+                fill
+                className="object-contain"
+              />
             </div>
+
+
             <span className="text-xl font-bold tracking-tight">Pedi<span className="text-primary">Care</span></span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
@@ -323,10 +330,17 @@ export default async function LandingPage() {
       {/* Footer */}
       <footer className="py-12 border-t bg-muted relative z-20">
         <div className="container mx-auto px-4 text-center text-muted-foreground font-medium">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-              <Stethoscope className="w-4 h-4 text-primary-foreground" />
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="relative w-8 h-8 opacity-80">
+              <Image
+                src="/logo-v2.png"
+                alt="PediCare Logo"
+                fill
+                className="object-contain"
+              />
             </div>
+
+
             <span className="font-bold text-foreground">PediCare</span>
           </div>
           <p className="mb-2">&copy; 2026 PediCare Management System. All rights reserved.</p>

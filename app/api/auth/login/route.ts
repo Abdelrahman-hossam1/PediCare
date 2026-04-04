@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import { prisma } from '@/lib/prisma'
 import { signAuthToken } from '@/lib/auth'
+import { createSession } from '@/lib/session'
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,11 +47,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create JWT token
+    // Create database session
+    const dbSession = await createSession(user.id)
+
+    // Create JWT token with sessionId
     const token = await signAuthToken({
       id: user.id,
       email: user.email,
       role: user.role,
+      sessionId: dbSession.id,
     })
 
     // Set cookie options

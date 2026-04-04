@@ -6,6 +6,7 @@ export interface TokenPayload extends JWTPayload {
   id: string
   email: string
   role: string
+  sessionId?: string
 }
 
 function secretKey() {
@@ -27,8 +28,9 @@ export async function verifyAuthToken(token: string): Promise<TokenPayload | nul
     const id = typeof payload.id === 'string' ? payload.id : null
     const email = typeof payload.email === 'string' ? payload.email : null
     const role = typeof payload.role === 'string' ? payload.role : null
+    const sessionId = typeof payload.sessionId === 'string' ? payload.sessionId : undefined
     if (!id || !email || !role) return null
-    return { id, email, role }
+    return { id, email, role, sessionId }
   } catch {
     return null
   }

@@ -20,7 +20,8 @@ export async function getCurrentUser(req?: Request): Promise<TokenPayload | null
     const id = req.headers.get("x-user-id");
     const role = req.headers.get("x-user-role");
     const email = req.headers.get("x-user-email");
-    if (id && role && email) return { id, role, email };
+    const sessionId = req.headers.get("x-session-id") || undefined;
+    if (id && role && email) return { id, role, email, sessionId };
 
     // Fallback if proxy didn't run (or headers missing): verify from cookie header
     const token = getCookieValue(req.headers.get("cookie"), "token");

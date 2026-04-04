@@ -74,6 +74,7 @@ model User {
   doctorAppointments Appointment[]   @relation("DoctorAppointments")
   medicalRecords     MedicalRecord[] @relation("DoctorMedicalRecords")
   paymentsHandled    Payment[]
+  sessions           Session[]
 }
 
 model Patient {
@@ -236,3 +237,41 @@ model Vaccine {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/**
+ * ===================== SESSION & ROLLBACK =====================
+ */
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  actions SessionAction[]
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model SessionAction {
+  id        String  @id @default(cuid())
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  model  String // e.g. "Patient", "Appointment"
+  action String // "CREATE", "UPDATE", "DELETE"
+
+  // JSON data for the change
+  data     Json? // New data/full object for CREATE/UPDATE
+  prevData Json? // Previous state for UPDATE/DELETE
+
+  targetId String // ID of the affected record
+
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+}
+
+// Add relation to User model (I'll do this in a multi_replace if needed, but I'll check User first)
