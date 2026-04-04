@@ -1,83 +1,124 @@
-# Clinic Management System
+# PediCare - Modern Clinic Management System
 
-A robust, full-stack Next.js web application designed to manage clinic operations, including patient records, appointment scheduling, billing, and role-based access control (Admin, Doctor, Receptionist).
+PediCare is a professional, full-stack clinic management platform built with **Next.js 15**, **TypeScript**, and **Prisma**. It provides a seamless experience for managing patients, appointments, medical records, and financial workflows with a focus on ease of use and data integrity.
 
-## 🚀 Tech Stack
+---
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router format)
+## 🌟 Key Features
+
+### 🔐 Multi-Role Access Control
+Tailored dashboards and permissions for different clinic staff:
+- **Admin**: Full system control, service/vaccine management, and deep visibility.
+- **Doctor**: Streamlined patient history, real-time diagnosis tracking, and treatment planning.
+- **Receptionist**: Efficient patient registration, quick appointment booking, and instant invoicing.
+
+### 📋 Patient & Medical Records (EMR)
+- **Centralized Registry**: Searchable database of patient demographics, blood types, and allergies.
+- **Treatment History**: Chronological view of symptoms, diagnoses, and previous consults.
+- **Digital Records**: Paperless documentation tied directly to patient encounters.
+
+### 🗓️ Smart Scheduling
+- **Real-time Tracking**: Manage appointment statuses from `SCHEDULED` to `COMPLETED` or `NO_SHOW`.
+- **Conflict Detection**: Prevent double-bookings through database-level constraints.
+
+### 💰 Financial & Billing System
+- **Structured Invoicing**: Automated calculation of services and vaccines.
+- **Customizable Items**: Support for discounts, custom prices, and multiple line items.
+- **Payment Tracking**: Track payments via Cash, Instapay, Card, or Digital Wallets.
+
+### 🛡️ Automated Data Cleanup (Session Rollback)
+A unique feature designed for clean development and testing:
+- **Change Tracking**: Every database action (CREATE, UPDATE, DELETE) is recorded within a user session.
+- **Auto-Revert**: Optional automatic rollback of session data on logout or expiration to keep the database tidy.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **UI/Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Radix UI](https://www.radix-ui.com/)
-- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/) (via Docker)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) & [Lucide Icons](https://lucide.dev/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
 - **ORM**: [Prisma](https://www.prisma.io/)
-- **Authentication**: JWT-based custom auth (`jose`, `jsonwebtoken`, `bcrypt`)
+- **Validation**: [Zod](https://zod.dev/) & [React Hook Form](https://react-hook-form.com/)
+- **Auth**: Custom Session-Based Auth with `jose` and `bcrypt`.
 
-## ✨ Key Features
+---
 
-- **Role-Based Access Control**: Secure portals tailored for Admins, Doctors, and Receptionists.
-- **Patient Management**: Centralized records of patient demographics, blood types, allergies, and medical history.
-- **Appointment Scheduling**: Real-time appointment tracking, allowing status updates (Scheduled, Confirmed, Completed, Canceled, No-Show).
-- **Medical Records**: Doctors can document diagnoses, symptoms, notes, and treatment plans directly tied to appointments.
-- **Financial & Billing Workflow**: Fully structured invoicing subsystem supporting custom invoice items, discounts, and tracking of payments (Cash, Instapay, Card, Wallet).
-- **Inventory & Services**: Tracking for standardized medical services and vaccine stocks.
+## 📁 Project Structure
 
-## 🛠️ Getting Started
+```text
+├── app/                  # Next.js App Router (Pages, API, Layouts)
+│   ├── admin/           # Admin-only portals
+│   ├── appointments/    # Shared scheduling modules
+│   ├── doctor/          # Medical professional interfaces
+│   └── receptionist/    # Front-desk operations
+├── components/           # Reusable UI components (shadcn/ui style)
+├── lib/                  # Shared utilities (DB, Auth, CurrentUser)
+├── prisma/               # Database schema and migration files
+├── public/               # Static assets (Logos, Icons)
+└── assets/               # Brand raw materials
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-Make sure you have the following installed on your local machine:
-- [Node.js](https://nodejs.org/) (v18+)
-- [Docker](https://www.docker.com/) & Docker Compose (for the PostgreSQL database)
+- Node.js v18.17+
+- Docker & Docker Compose (for Postgres)
 
-### Installation & Setup
+### Installation
 
-1. **Clone the repository** (if not already done) and navigate into the project directory:
+1. **Clone & Install**:
    ```bash
+   git clone <repository-url>
    cd clinic-test
-   ```
-
-2. **Install dependencies**:
-   ```bash
    npm install
    ```
 
-3. **Set up Environment Variables**:
-   Create a `.env` file in the root directory (you can copy `.env.example` if it exists) and add your database configurations and JWT strings.
-   *(Note: By default, Prisma connects to the Dockerized local DB setup via `DATABASE_URL`)*.
-
-4. **Spin up the Database**:
-   The project includes a Docker compose setup for PostgreSQL.
-   ```bash
-   npm run db:up
+2. **Environment Variables**:
+   Create a `.env` file in the root:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/pedicare"
+   JWT_SECRET="your-super-secret-key"
+   SESSION_DURATION="3600" # in seconds
    ```
 
-5. **Run Database Migrations**:
-   Synchronize your Prisma schema with the Postgres database:
+3. **Database Setup**:
    ```bash
+   # Spin up PostgreSQL
+   npm run db:up
+
+   # Apply migrations
    npm run prisma:migrate
    ```
 
-6. **Start the Development Server**:
+4. **Run Development Server**:
    ```bash
-   npm run dev
+   # Start DB and Next.js together
+   npm run dev:all
    ```
-   > **Pro Tip**: You can use `npm run dev:all` to spin up both the database and the Next.js development server simultaneously!
 
-The application will now be running on `http://localhost:3000`.
+---
 
 ## 📦 Available Scripts
 
-- `npm run dev` - Starts the Next.js development server.
-- `npm run db:up` - Starts the PostgreSQL container in the background.
-- `npm run db:down` - Stops and removes the database container.
-- `npm run db:reset` - Drops the database container/volumes and restarts it fresh.
-- `npm run dev:all` - Runs both the database container and the dev server.
-- `npm run prisma:migrate` - Applies outstanding database migrations.
-- `npm run prisma:studio` - Opens a visual database browser on `http://localhost:5555`.
-- `npm run build` - Builds the application for production.
-- `npm run lint` - Lints the codebase using ESLint.
+| Script | Detail |
+| :--- | :--- |
+| `npm run dev` | Start Next.js development server |
+| `npm run dev:all` | Start Docker PostgreSQL + Next.js together |
+| `npm run db:up` | Start the Postgres container |
+| `npm run db:down` | Stop the Postgres container |
+| `npm run prisma:migrate` | Sync schema and update client |
+| `npm run prisma:studio` | GUI for browsing your database |
+| `npm run build` | Production build |
 
-## 🐳 Docker Deployment
-If you intend to test or deploy via Docker containers fully, see the [README.Docker.md](./README.Docker.md) for detailed instructions on building and serving the production image.
+---
 
 ## 📄 License
-This project is private and intended for specific commercial or educational deployment.
+This project is private and intended for specific deployment.
+
+---
+*Developed by Abdelrahman Hossam*
